@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="620.0" prefWidth="1100.0" style="-fx-background-radius: 0 0 15 0; -fx-background-color: transparent;">
+         <children>
+            <VBox AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <JFXButton graphicTextGap="20.0" onMouseClicked="#newGame" prefHeight="70.0" prefWidth="225.0" style="-fx-alignment: center-left;" text="New game" wrapText="true">
+                     <font>
+                        <Font name="SansSerif Regular" size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="7.5" />
+                     </VBox.margin>
+                     <textFill>
+                        <LinearGradient cycleMethod="REFLECT" endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.12919999659061432" green="0.18982522189617157" blue="0.6800000071525574" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.2030409425497055" green="0.6526315808296204" blue="0.6301520466804504" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </JFXButton>
+               </children>
+            </VBox>
+            <Pane layoutX="300.0" layoutY="6.0" opacity="0.9" prefHeight="575.0" prefWidth="776.0" style="-fx-background-color: #efefef; -fx-background-radius: 20;" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="0.0">
+               <effect>
+                  <DropShadow blurType="GAUSSIAN" offsetX="-1.0" offsetY="2.0" spread="0.04">
+                     <color>
+                        <Color opacity="0.5" />
+                     </color>
+                  </DropShadow>
+               </effect>
+               <children>
+                  <Label fx:id="gameStateLabel" layoutY="15.0" prefHeight="45.0" prefWidth="600.0" textFill="#03151e">
+                     <font>
+                        <Font name="SansSerif Regular" size="24.0" />
+                     </font>
+                  </Label>
+                  <ScrollPane layoutY="75.0" prefHeight="486.0" prefWidth="776.0">
+                    <content>
+                      <AnchorPane fx:id="board" minHeight="0.0" minWidth="0.0" />
+                    </content>
+                  </ScrollPane>
+               </children>
+            </Pane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

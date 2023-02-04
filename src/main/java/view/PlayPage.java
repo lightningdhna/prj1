@@ -1,5 +1,6 @@
 package view;
 
+import engine.MinimaxEngine;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -34,6 +35,22 @@ public class PlayPage extends Page{
 
     Game game = new Game();
 
+    public void moveByEngine(){
+        if(!game.getGameState().equals( "on going"))
+            return;
+        Point point = MinimaxEngine.findBestMove(game);
+//        while(!game.canPlay(point)){
+//            point = MinimaxEngine.findBestMove(game);
+//        }
+
+        cells[point.getRow()-1][point.getColumn()-1].setText(game.getPlayer().toString());
+        game.playMove(point);
+        if(!game.getGameState().equals( "on going")){
+            gameStateLabel.setText(game.getGameState());
+        }
+
+    }
+
     EventHandler<MouseEvent> eventEventHandler = event -> {
         Button button = (Button) event.getSource();
         for(int i=0;i<rowNum;i++){
@@ -45,6 +62,7 @@ public class PlayPage extends Page{
                         if(!game.getGameState().equals( "on going")){
                             gameStateLabel.setText(game.getGameState());
                         }
+                        moveByEngine();
                     }
                 }
         }

@@ -79,8 +79,21 @@ public class Board {
     @Override
     public Board clone()  {
         Board board = new Board(state.length-2,state[0].length-2);
-        board.setState(this.state.clone());
+        board.state = new Character[state.length][state[0].length];
+        for(int i=0;i<board.state.length;i++){
+            board.state[i] = state[i].clone();
+        }
         return board;
 
+    }
+    public Board cloneMoveX(Point point){
+        Board board = clone();
+        board.playX(point);
+        return board;
+    }
+    public Board cloneMoveO(Point point){
+        Board board = clone();
+        board.playO(point);
+        return board;
     }
 }

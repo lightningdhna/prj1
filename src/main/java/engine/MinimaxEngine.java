@@ -30,15 +30,22 @@ public class MinimaxEngine extends Engine{
 
         return moves;
     }
-    public static Point findBestMove(Game inputGame){
+    public static Point findBestMove(final Game inputGame){
         Game game = inputGame.clone();
+        Board board = game.getBoard();
         Set<Point> moves = logicalMove(game);
         System.out.println(moves.size());
+        double max=-1e7;
+        Point result = new Point(1,1);
         for(Point move : moves){
-            System.out.println(move.getRow()+" "+move.getColumn());
-        }
 
-        return new Point(1,1);
+            double temp=Engine.evaluateInstantStateValueForO(board.cloneMoveO(move));
+            if(temp > max){
+                max = temp;
+                result = move;
+            }
+        }
+        return result;
     }
 
 }

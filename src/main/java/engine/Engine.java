@@ -98,7 +98,7 @@ public abstract class Engine {
         Board board = new Board(1,5);
         instantReward.put(board,1.0);
         board.getStateArray()[1][1]='B';
-        board.getStateArray()[1][1]='_';
+//        board.getStateArray()[1][1]='_';
         System.out.println(instantReward.get(board.clone()));
     }
     public static Point[] getDirections(){

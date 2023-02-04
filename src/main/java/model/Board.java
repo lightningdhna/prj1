@@ -1,12 +1,49 @@
 package model;
 
-public class Board {
-    Character[][] state ;
+import java.util.Objects;
 
+public class Board {
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if(getColumnNum()!=((Board) o).getColumnNum()||getRowNum()!=((Board) o).getRowNum())
+            return false;
+        for(int i=0;i<state.length;i++){
+            for(int j=0;j<state[0].length;j++){
+                if(!state[i][j].equals(((Board) o).getStateArray()[i][j])){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        Integer[] code = new Integer[state.length];
+        for(int i=0;i<state.length;i++){
+            code[i]= Objects.hash((Object[]) state[i] );
+        }
+        return Objects.hash((Object[]) code);
+//        return Objects.hashCode(state);
+    }
+   private  Character[][] state ;
+
+    private int rowNum, columnNum;
+    public boolean legalPoint(Point point){
+        int row  = point.getRow();
+        int column = point.getColumn();
+        return (row>=1 && row<= rowNum && column>=1 && column<=columnNum);
+    }
     public Board(int rowNumber, int columnNumber){
+        this.rowNum = rowNumber;
+        this.columnNum = columnNumber;
         state = new Character[rowNumber+2][columnNumber+2];
         for(Character[] row : state){
-            for(int i=1;i<=columnNumber;i++){
+            for(int i=0;i<=columnNumber+1;i++){
                 row[i]='_';
             }
         }
@@ -16,7 +53,7 @@ public class Board {
         return state[point.getRow()][point.getColumn()] == '_';
     }
 
-    public char getValue(Point point){
+    public Character getValue(Point point){
         return state[point.getRow()][point.getColumn()];
     }
 
@@ -29,5 +66,21 @@ public class Board {
     }
     public Character[][] getStateArray(){
         return state;
+    }
+    public int getRowNum(){
+        return this.rowNum;
+    }
+    public int getColumnNum(){
+        return this.columnNum;
+    }
+    public void setState(Character[][] state){
+        this.state = state;
+    }
+    @Override
+    public Board clone()  {
+        Board board = new Board(state.length-2,state[0].length-2);
+        board.setState(this.state.clone());
+        return board;
+
     }
 }

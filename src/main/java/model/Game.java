@@ -1,14 +1,30 @@
 package model;
 
+import engine.Engine;
+import engine.MinimaxEngine;
+
 public class Game {
     private String gameState = "on going";
     private Board board;
-    private String player = "X";
+    private Character player = 'X';
 
-    private final int rowNumber =  30;
-    private final int columnNumber =  50;
+    public static final int rowNumber =  15;
+    public static final int columnNumber =  15;
 
     private int playTimes=0;
+
+    @Override
+    public Game clone(){
+        Game game = new Game();
+        game.board = this.board.clone();
+        game.gameState = this.gameState;
+        game.player = this.player;
+        game.playTimes = 0;
+        return game;
+    }
+    public void setGameState(String state){
+        gameState= state;
+    }
 
     public boolean canPlay(Point point){
         if(!gameState.equals("on going"))
@@ -21,28 +37,30 @@ public class Game {
     }
 
 
+
     private void playX(Point point){
-        System.out.println("1");
         board.playX(point);
     }
     private void playO(Point point){
         board.playO(point);
     }
     private void switchPlayer(){
-        if(player.equals("X"))
-            player = "O";
-        else player = "X";
+        if(player.equals('X'))
+            player = 'O';
+        else player = 'X';
     }
     public void playMove(Point point){
         if(!canPlay(point))
             return;
-        if(player.equals("X"))
+        if(player.equals('X'))
             playX(point);
         else playO(point);
+        System.out.println(player+"   "+Engine.evaluateInstantStateValueForX(board));
+        MinimaxEngine.findBestMove(this);
         switchPlayer();
         playTimes++;
         gameState = getGameStateAfterMove();
-        printState();
+//        printState();
     }
 
     public Game(){
@@ -55,8 +73,11 @@ public class Game {
         return board.getValue(point);
     }
 
-    private Character checkWin(){
-        Character[][] stateArray= board.getStateArray();
+    public static Character getWinState(Board board){
+        Character[][] stateArray = board.getStateArray();
+        int playTime = 0;
+        int rowNumber = board.getStateArray().length-2;
+        int columnNumber = board.getStateArray()[0].length -2 ;
         int[] dr ={0,1,1,1};
         int[] dc ={1,1,0,-1};
         for(int dir = 0 ;dir<4;dir++){
@@ -73,6 +94,7 @@ public class Game {
                     if(stateArray[i][j]=='_'){
                         continue;
                     }
+                    playTime++;
                     if(stateArray[i][j].equals(stateArray[i-di][j-dj])) {
                         count[i][j]=count[i-di][j-dj]+1;
                         if(count[i][j]==5)
@@ -82,7 +104,13 @@ public class Game {
                 }
             }
         }
+        if(playTime == rowNumber*columnNumber)
+            return 'D';
         return '_';
+    }
+
+    private Character checkWin(){
+        return getWinState(board);
     }
     private String getGameStateAfterMove(){
         char c = checkWin();
@@ -106,7 +134,8 @@ public class Game {
             System.out.println();
         }
     }
-    public String getPlayer(){
+    public Character getPlayer(){
         return this.player;
     }
+
 }

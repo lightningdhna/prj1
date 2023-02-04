@@ -10,13 +10,26 @@ import model.Game;
 import model.Point;
 
 public class PlayPage extends Page{
+    public PlayPage(){
+        super();
+        for(int row=0;row<rowNum;row++){
+            for(int column=0;column<colNum;column++){
+                cells[row][column]= new Button();
+                Button button = cells[row][column];
+                button.setPrefSize(30,30);
+                button.setOnMouseClicked(eventEventHandler);
+                button.setLayoutX(column*30);
+                button.setLayoutY(row*30);
+            }
+        }
+    }
     @FXML
     Label gameStateLabel;
     @FXML
     AnchorPane board;
 
-    int rowNum = 30;
-    int colNum = 50;
+    int rowNum = Game.rowNumber;
+    int colNum = Game.columnNumber;
     Button[][] cells = new Button[rowNum][colNum];
 
     Game game = new Game();
@@ -27,7 +40,7 @@ public class PlayPage extends Page{
             for(int j=0;j<colNum;j++)
                 if(cells[i][j]==button){
                     if(game.canPlay(new Point(i+1,j+1))){
-                        cells[i][j].setText(game.getPlayer());
+                        cells[i][j].setText(game.getPlayer().toString());
                         game.playMove(new Point(i+1,j+1));
                         if(!game.getGameState().equals( "on going")){
                             gameStateLabel.setText(game.getGameState());
@@ -37,16 +50,13 @@ public class PlayPage extends Page{
         }
     };
     private void setButton(Button button, int row, int column){
-        button.setLayoutX(column*30);
-        button.setLayoutY(row*30);
-        button.setPrefSize(30,30);
-        button.setOnMouseClicked(eventEventHandler);
-        board.getChildren().add(button);
+        button.setText(" ");
+        if(!board.getChildren().contains(button))
+            board.getChildren().add(button);
     }
     private void initBoard(){
         for(int i=0;i<rowNum;i++){
             for(int j=0;j<colNum;j++){
-                cells[i][j]= new Button();
                 setButton(cells[i][j], i,j);
             }
         }
@@ -54,8 +64,9 @@ public class PlayPage extends Page{
 
     public void newGame(){
         gameStateLabel.setText("");
-        board.getChildren().clear();
+        game = new Game();
         initBoard();
-        game= new Game();
     }
+
+
 }

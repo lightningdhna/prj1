@@ -104,4 +104,10 @@ public abstract class Engine {
     public static Point[] getDirections(){
         return directions;
     }
+    public static Double evaluateInstantStateValueDif(Board board, Character player){
+        if(player.equals('O')){
+            return evaluateInstantStateValueForO(board);
+        }
+        else return evaluateInstantStateValueForX(board);
+    }
 }

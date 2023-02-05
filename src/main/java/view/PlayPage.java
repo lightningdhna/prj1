@@ -1,6 +1,7 @@
 package view;
 
 import engine.MinimaxEngine;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,10 +46,9 @@ public class PlayPage extends Page{
 
         cells[point.getRow()-1][point.getColumn()-1].setText(game.getPlayer().toString());
         game.playMove(point);
-        if(!game.getGameState().equals( "on going")){
+        if(!game.getGameState().equals( "on going")) {
             gameStateLabel.setText(game.getGameState());
         }
-
     }
 
     EventHandler<MouseEvent> eventEventHandler = event -> {
@@ -63,6 +63,7 @@ public class PlayPage extends Page{
                             gameStateLabel.setText(game.getGameState());
                         }
                         moveByEngine();
+
                     }
                 }
         }

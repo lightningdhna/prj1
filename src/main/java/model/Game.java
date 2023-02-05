@@ -56,7 +56,7 @@ public class Game {
             playX(point);
         else playO(point);
         System.out.println(player+"   "+Engine.evaluateInstantStateValueForX(board));
-        MinimaxEngine.findBestMove(this);
+//        MinimaxEngine.findBestMove(this);
         switchPlayer();
         playTimes++;
         gameState = getGameStateAfterMove();

@@ -64,6 +64,9 @@ public class Board {
     public void playO(Point point){
         state[point.getRow()][point.getColumn()] = 'O';
     }
+    public void undoMove(Point point){
+        state[point.getRow()][point.getColumn()] = '_';
+    }
     public Character[][] getStateArray(){
         return state;
     }
@@ -96,4 +99,5 @@ public class Board {
         board.playO(point);
         return board;
     }
+
 }

@@ -13,7 +13,7 @@ import java.util.*;
 
 
     private final double epsilon = 0.2;
-    private final double  gamma = 0.6;
+    private final double  gamma = 0.8;
     private final double alpha = 0.3;
 
     private final int maxDepth = 4;
@@ -28,7 +28,7 @@ import java.util.*;
          Set<Point> result = new HashSet<>();
          int rowNum = stateArray.length-2;
          int colNum = stateArray[0].length-2;
-         final int dis= 1;
+         final int dis= 2;
          for(int i=1;i<=rowNum;i++){
              for(int j=1;j<=colNum;j++){
                  if(!stateArray[i][j].equals('_')){
@@ -49,7 +49,7 @@ import java.util.*;
         int depth = 0;
         ArrayList<Point> result = new ArrayList<>();
         State state = state0.clone();
-        Point move = new Point(0,0);
+        Point move;
 
         Character winState = Engine.getEngine().getWinState(state.getStateArray());
         Character player = 'O';
@@ -59,24 +59,36 @@ import java.util.*;
             }
             else{
                 Set<Point> moves = generateMove(state.getStateArray());
-                ArrayList<Point> arr = new ArrayList<>(moves);
-                move = arr.get(new Random().nextInt(arr.size()));
+//                Map<Point, Double> evalMove = new HashMap<>();
+
+//                double sum = 0;
+//                for(Point temp: moves){
+//                    double tempEval = eval(state.clonePlay(temp,player));
+//                    evalMove.put(temp, tempEval);
+//                    sum+=tempEval;
+//                }
+//                move = null;
+//                for(Point temp:moves){
+//                    if(Math.random() <= evalMove.get(temp)/sum){
+//                        move= temp;
+//                    }
+//                }
+                move=null;
+                if(move==null){
+                    ArrayList<Point> move2 = new ArrayList<>(moves);
+                    move = move2.get(new Random().nextInt(move2.size()));
+                }
+
             }
 
             result.add(move);
             state.play(move,player);
+            player = player.equals('X')?'O':'X';
             winState = Engine.getEngine().getWinState(state.getStateArray());
 
         }
         return result;
     }
-    private void qLearning(State state0,final ArrayList<Point> moves) {
-        State state = state0.clone();
-        Stack<Point> st = new Stack<>();
-
-
-    }
-
     public double eval(State state){
         if(evalMap.containsKey(state))
             return evalMap.get(state);
@@ -93,19 +105,18 @@ import java.util.*;
         if(vMap.containsKey(state))
             return vMap.get(state);
         else {
-            vMap.put(state,0.0);
+            vMap.put(state,eval(state));
             return 0.0;
         }
     }
     public void updatePi(State state, Point action){
         if (piMap.containsKey(state)) {
-
             piMap.replace(state, action);
         }
         else piMap.put(state,action);
     }
 
-    private Double updateV(State state, int id, Character player, ArrayList<Point> moves){
+    private Double qlearning(State state, int id, Character player, ArrayList<Point> moves){
 
         if(id==moves.size()) {
             return getValue(state);
@@ -121,7 +132,7 @@ import java.util.*;
             State nexState = state.clonePlayX(action);
             result = (1-alpha)*result+
                     alpha * (  eval(nexState)- eval(state) +
-                            gamma * Math.min(getValue(nexState),updateV(nexState,id+1,opponent,moves))
+                            gamma * Math.min(getValue(nexState), qlearning(nexState,id+1,opponent,moves))
                     );
             if( result <= curMax){
                 updatePi(state,action);
@@ -131,7 +142,7 @@ import java.util.*;
             State nexState = state.clonePlayO(action);
             result = (1-alpha)*result+
                     alpha * (  eval(nexState)- eval(state) +
-                            gamma *  Math.max(getValue(nexState),updateV(nexState,id+1,opponent,moves))
+                            gamma *  Math.max(getValue(nexState), qlearning(nexState,id+1,opponent,moves))
                     );
             if( result >= curMax){
                 updatePi(state,action);
@@ -152,7 +163,7 @@ import java.util.*;
 //                    }
                     while(!Thread.interrupted()){
                         ArrayList<Point> moves = generateSequence(state);
-                        updateV(state,0,'O',moves);
+                        qlearning(state,0,'O',moves);
                     }
                 }
         );
@@ -162,8 +173,8 @@ import java.util.*;
 
     public Point findBestMove(Game inputGame){
         State state =new State(inputGame.getBoard().getStateArray());
-        int agentsNum = 5;
-        Thread[] agents = new Thread[5];
+        int agentsNum = 1;
+        Thread[] agents = new Thread[agentsNum];
         for(int i=0;i<agentsNum;i++) {
             agents[i] = training(state);
         }
@@ -175,6 +186,7 @@ import java.util.*;
         for(int i=0;i<agentsNum;i++){
             agents[i].interrupt();
         }
+        System.out.println(evalMap.size());
         return piMap.get(state);
     }
 

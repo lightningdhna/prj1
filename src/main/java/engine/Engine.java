@@ -5,10 +5,14 @@ import model.Game;
 import model.Point;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Engine {
 
     private static final HashMap<Board,Double> instantReward = new HashMap<>();
+    public static int getMapSize(){
+        return  instantReward.size();
+    }
     private static final Point[] directions = new Point[]{
             new Point(0,1),
             new Point(1,1),
@@ -21,9 +25,6 @@ public abstract class Engine {
     };
     static final Double[] diemLT = {0.0,1.0,2.0,4.0,9.0,1e6};
 
-    public static Point findBestMove(Game game) {
-        return null;
-    }
 
 
     private static double getInstantReward(Board board,Point point,Point direction, Character player){
@@ -82,6 +83,8 @@ public abstract class Engine {
         }
         return result;
     }
+
+
     public static double evaluateInstantStateValueForX(Board inputBoard){
         Board board = inputBoard.clone();
         if(instantReward.containsKey(board))
@@ -89,6 +92,7 @@ public abstract class Engine {
         double result = evaluateInstantStateValue(board,'X') - evaluateInstantStateValue(board,'O');
         instantReward.put(board,result);
         return result;
+
     }
     public static double evaluateInstantStateValueForO(Board board){
         return -evaluateInstantStateValueForX(board);

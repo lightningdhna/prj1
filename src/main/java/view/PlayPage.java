@@ -1,7 +1,7 @@
 package view;
 
-import engine.MinimaxEngine;
-import javafx.application.Platform;
+import enginev2.MinimaxEngine;
+import enginev2.QLearning;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -39,7 +39,8 @@ public class PlayPage extends Page{
     public void moveByEngine(){
         if(!game.getGameState().equals( "on going"))
             return;
-        Point point = MinimaxEngine.findBestMove(game);
+        Point point = QLearning.getEngine().findBestMove(game);
+//        Point point = MiniMaxEngineV2.findBestMove(game);
 //        while(!game.canPlay(point)){
 //            point = MinimaxEngine.findBestMove(game);
 //        }

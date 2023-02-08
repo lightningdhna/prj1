@@ -2,14 +2,17 @@ package model;
 
 import engine.Engine;
 import engine.MinimaxEngine;
+import enginev2.QLearning;
+
+import java.util.ArrayList;
 
 public class Game {
     private String gameState = "on going";
     private Board board;
     private Character player = 'X';
 
-    public static final int rowNumber =  15;
-    public static final int columnNumber =  15;
+    public static final int rowNumber =  12;
+    public static final int columnNumber =  12;
 
     private int playTimes=0;
 
@@ -56,10 +59,18 @@ public class Game {
             playX(point);
         else playO(point);
         System.out.println(player+"   "+Engine.evaluateInstantStateValueForX(board));
+        System.out.println(player+"   "+enginev2.Engine.getEngine().evaluateGame(new State(board.getStateArray()),'X'));
 //        MinimaxEngine.findBestMove(this);
         switchPlayer();
         playTimes++;
         gameState = getGameStateAfterMove();
+
+
+        for(int i=0 ;i< 1000;i++){
+
+            ArrayList<Point> moves = QLearning.getEngine().generateSequence(new State(board.getStateArray()));
+        }
+        System.out.println("______________");
 //        printState();
     }
 

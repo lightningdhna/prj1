@@ -12,18 +12,10 @@ public class MinimaxEngine extends Engine{
     private static ArrayList<Point> findLogicalMoveSort(Board board, Character player){
         Set<Point> moves = logicalMove(board);
         ArrayList<Point> result = new ArrayList<>(moves);
+        Map<Point,Double> reward = new HashMap<>();
 
 
-        result.sort((Point a, Point b) -> {
-            int valueDif = (int) (Engine.evaluateInstantStateValueForX(board.cloneMoveO(a))
-                                -Engine.evaluateInstantStateValueForX(board.cloneMoveO(b)));
-            if(player.equals('O')){
-                return valueDif;
-            }
-            else {
-                return -valueDif;
-            }
-        });
+
 
         return result;
     }
@@ -50,56 +42,75 @@ public class MinimaxEngine extends Engine{
     public static Point findBestMove(final Game inputGame){
         Game game = inputGame.clone();
         Board board = game.getBoard();
-        ArrayList<Point> moves = findLogicalMoveSort(board,'O');
+//        ArrayList<Point> moves = findLogicalMoveSort(board,'O');
+        Set<Point> moves = logicalMove(board);
         Point result = new Point(1,1);
-        double min=4e6;
+        double max=-4e6;
         System.out.println(moves.size());
+        positionCounter=0;
+        endPositionCounter=0;
         for(Point move: moves){
-            positionCounter=0;
 //            double cur =Engine.evaluateInstantStateValueForO(board);
-            double cur =minimaxEvaluate(board.cloneMoveX(move),'X',0,-3e6,+3e6);
-            if(cur<min) {
-                min=cur;
+            double cur =minimaxEvaluate(board.cloneMoveO(move),'X',0,-3e6,+3e6);
+            System.out.println(positionCounter);
+            if(cur>max) {
+                max=cur;
                 result = move;
             }
 
         }
         System.out.println(positionCounter);
+        System.out.println(endPositionCounter);
+        int cnt=0;
+        for(int i=0;i<maxDepth;i++)
+            cnt+=minimaxValue[i].size();
+        System.out.println(cnt);
         return result;
     }
 
 
     static int positionCounter = 0;
-    final private static int maxDepth = 2;
-    private static final ArrayList<HashMap<Board,Double>> minimaxValueO = new ArrayList<>() ;
-    private static final ArrayList<HashMap<Board,Double>> minimaxValueX = new ArrayList<>() ;
+    static int endPositionCounter = 0;
+    final private static int maxDepth = 4;
+    private static final Map<Board,Double>[] minimaxValue = new HashMap[50] ;
 
     public static double minimaxEvaluate(Board board, Character player, int depth, double alpha, double beta){
-
-        if(depth == maxDepth){
-            return Engine.evaluateInstantStateValueForO(board);
+        if(minimaxValue[depth] ==null){
+            minimaxValue[depth] = new HashMap<>();
         }
+        if(minimaxValue[depth].containsKey(board))
+            return minimaxValue[depth].get(board);
+
         Character winState = Game.getWinState(board);
         if(winState.equals('O')){
+            minimaxValue[depth].put(board,3e6);
             return 3e6;
         }
         if(winState.equals('X')){
+            minimaxValue[depth].put(board,-3e6);
             return -3e6;
         }
         if(winState.equals('D')){
+            minimaxValue[depth].put(board,-1.0);
             return -1;
         }
         ++positionCounter;
+        if(depth == maxDepth){
+            ++endPositionCounter;
+            double temp = Engine.evaluateInstantStateValueForO(board);
+            minimaxValue[depth].put(board,temp);
+            return temp;
+        }
         Character opponent;
-//        ArrayList<Point> moves = findLogicalMoveSort(board, player);
-        Set<Point> moves = logicalMove(board);
+        ArrayList<Point> moves = findLogicalMoveSort(board, player);
+//        Set<Point> moves = logicalMove(board);
         ArrayList<Integer> reward = new ArrayList<>();
 
         if(player.equals('O')){
             opponent = 'X';
             double maxEval = -3e6;
             for(Point move: moves){
-                board.playX(move);
+                board.playO(move);
                 maxEval = Math.max( maxEval , minimaxEvaluate(board, opponent, depth+1, alpha,beta));
                 board.undoMove(move);
                 alpha = Math.max(alpha,maxEval);
@@ -107,6 +118,7 @@ public class MinimaxEngine extends Engine{
                     break;
 
             }
+            minimaxValue[depth].put(board,maxEval);
             return maxEval;
 
         }
@@ -114,11 +126,14 @@ public class MinimaxEngine extends Engine{
             opponent = 'O';
             double minEval = 3e6;
             for(Point move: moves){
-                minEval = Math.min( minEval , minimaxEvaluate(board.cloneMoveO(move), opponent, depth+1, alpha,beta));
+                board.playX(move);
+                minEval = Math.min( minEval , minimaxEvaluate(board, opponent, depth+1, alpha,beta));
+                board.undoMove(move);
                 beta = Math.min(beta,minEval);
                 if(alpha>=beta)
                     break;
             }
+            minimaxValue[depth].put(board,minEval);
             return minEval;
         }
     }
